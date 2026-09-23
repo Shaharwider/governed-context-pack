@@ -1,0 +1,8 @@
+{
+  "subjects": [{ "kind": "trust_tier", "ref": "sandboxed" }],
+  "verbs": ["write"],
+  "objects": { "roles": ["working"] },
+  "effect": "allow_up_to",
+  "conditions": { "task_scoped": true },
+  "rationale": "Sandboxed agents write only into working memory, and only inside an open task."
+}

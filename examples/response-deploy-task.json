@@ -1,0 +1,68 @@
+{
+  "pack_version": "0.2",
+  "mission_slice": [
+    { "id": "n_mission", "text": "We never ship a billing change without a reversible path. Customer trust outranks release speed." }
+  ],
+  "binding_constraints": [
+    {
+      "rule": "no-prod-deploy-during-freeze",
+      "statement": "Production deploys are frozen during the pricing-change window without a human co-sign.",
+      "effect": "deny",
+      "source_policy": "pol_142",
+      "applies_because": ["verb:write", "artifact:services/billing-worker"]
+    },
+    {
+      "rule": "billing-writes-require-cosign",
+      "statement": "Writes touching billing require sponsor co-sign.",
+      "effect": "require",
+      "source_policy": "pol_089",
+      "applies_because": ["verb:write"]
+    }
+  ],
+  "definitions": [
+    { "term": "billing-worker", "definition": "The Cloud Run service draining the invoicing jobs queue.", "canonical_id": "ent_billing_worker" }
+  ],
+  "decisions_in_force": [
+    {
+      "id": "ADR-042",
+      "title": "Blue/green deploys for all billing services",
+      "ttl_state": "expiring",
+      "expires": "2026-09-14T00:00:00Z",
+      "supersedes": ["ADR-031"],
+      "provenance": { "origin": "dana@example.com", "method": "authored", "created_at": "2026-06-16T09:00:00Z" }
+    }
+  ],
+  "knowledge": [
+    {
+      "id": "n_runbook_deploy",
+      "title": "Billing deploy runbook",
+      "body": "Steps: canary 5% → verify invoice parity → 100%…",
+      "circle": "org/operations",
+      "authority": 6,
+      "freshness": "fresh",
+      "why_included": "entity match: billing-worker; graph: governed_by ADR-042",
+      "provenance": { "origin": "connector:github", "method": "machine-indexed", "created_at": "2026-09-08T03:12:00Z" }
+    }
+  ],
+  "live_data": [],
+  "conflicts": [
+    {
+      "node_ids": ["ADR-042", "n_proposal_direct_deploy"],
+      "nature": "Proposed decision contradicts the blue/green requirement.",
+      "guidance": "ADR-042 is in force; the proposal is unapproved — prefer ADR-042 and flag to a human."
+    }
+  ],
+  "pack_meta": {
+    "pack_id": "pk_01J8F2ZQ7T",
+    "principal": "agent:deploy-bot (sponsor: dana@example.com)",
+    "as_of": "2026-09-10T12:00:00Z",
+    "coverage": 0.82,
+    "gaps": ["no rollback runbook found for billing-worker"],
+    "served": [
+      { "node_id": "n_mission", "version": "v3" },
+      { "node_id": "ADR-042", "version": "v2" },
+      { "node_id": "n_runbook_deploy", "version": "v11" }
+    ],
+    "workspace_id": "ws_01J8F2K9QX"
+  }
+}

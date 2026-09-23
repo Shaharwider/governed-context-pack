@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaharwider.github.io/context-pack-spec/schema/pack-request.schema.json",
+  "title": "ContextPackRequest",
+  "type": "object",
+  "properties": {
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "description": "What the agent is trying to accomplish, in natural language."
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Domain entities the task touches; resolved against the provider's ontology."
+    },
+    "verbs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "read",
+          "propose",
+          "write",
+          "approve",
+          "traverse"
+        ]
+      },
+      "minItems": 1,
+      "description": "What the agent plans to DO — drives binding_constraints computation."
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Concrete artifacts in play (paths, service names, doc ids)."
+    },
+    "token_budget": {
+      "type": "integer",
+      "minimum": 256,
+      "description": "Maximum rendered pack size in model tokens; provider degrades gracefully."
+    },
+    "as_of": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Evaluate knowledge as of this instant (RFC 3339)."
+    },
+    "workspace_id": {
+      "type": "string",
+      "description": "Task workspace this pack belongs to (context ledger)."
+    },
+    "include": {
+      "type": "object",
+      "properties": {
+        "live_data": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "intent",
+    "verbs"
+  ],
+  "additionalProperties": false
+}

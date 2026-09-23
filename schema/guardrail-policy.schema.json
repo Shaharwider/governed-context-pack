@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaharwider.github.io/context-pack-spec/schema/guardrail-policy.schema.json",
+  "title": "GuardrailPolicy",
+  "type": "object",
+  "properties": {
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "principal",
+              "role",
+              "trust_tier"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "verbs": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "read",
+          "propose",
+          "write",
+          "approve",
+          "traverse"
+        ]
+      },
+      "minItems": 1
+    },
+    "objects": {
+      "type": "object",
+      "properties": {
+        "circle_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Path prefixes the policy applies to."
+        },
+        "node_types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sensitivity_max": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "authority_min": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Only circles whose authority is >= this value."
+        },
+        "authority_max": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Only circles whose authority is <= this value."
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Only circles carrying at least one of these roles."
+        }
+      },
+      "additionalProperties": false
+    },
+    "effect": {
+      "type": "string",
+      "enum": [
+        "allow_up_to",
+        "deny"
+      ],
+      "description": "Membranes only narrow — there is deliberately no widening effect."
+    },
+    "conditions": {
+      "type": "object",
+      "properties": {
+        "schedule": {
+          "type": "string"
+        },
+        "requires_cosign": {
+          "type": "boolean"
+        },
+        "task_scoped": {
+          "type": "boolean"
+        },
+        "max_per_day": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Human-readable why — policies are knowledge and explain themselves."
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "subjects",
+    "verbs",
+    "effect"
+  ],
+  "additionalProperties": false
+}

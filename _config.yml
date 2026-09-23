@@ -1,0 +1,16 @@
+# GitHub Pages config — zero-build: Pages runs Jekyll with a supported theme,
+# so nothing is compiled locally and no Actions deploy workflow is needed.
+# Settings → Pages → "Deploy from a branch" → main / (root) is the only step.
+title: Context Pack Specification
+description: An open standard for what AI agents are told.
+theme: jekyll-theme-primer
+
+# index.md is generated from SPEC.md by scripts/build-public-repo.sh in the
+# Circles monorepo, so https://shaharwider.github.io/context-pack-spec/ IS the
+# spec. schema/ and examples/ are copied verbatim and stay fetchable as JSON.
+exclude:
+  - CONTRIBUTING.md
+  - scripts
+  - node_modules
+  - Gemfile
+  - Gemfile.lock

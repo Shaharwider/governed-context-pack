@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaharwider.github.io/context-pack-spec/schema/pack-response.schema.json",
+  "title": "ContextPackResponse",
+  "type": "object",
+  "properties": {
+    "pack_version": {
+      "type": "string",
+      "description": "Spec version this pack conforms to, e.g. \"0.2\"."
+    },
+    "mission_slice": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/textItem"
+      },
+      "description": "Compressed rendering of the mission-role circle(s) — always included, never elided by budget."
+    },
+    "binding_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "Stable rule id."
+          },
+          "statement": {
+            "type": "string",
+            "description": "Human-readable rule."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "deny",
+              "require"
+            ]
+          },
+          "source_policy": {
+            "type": "string",
+            "description": "Policy node id that produced this constraint."
+          },
+          "applies_because": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "Declared verbs/artifacts that triggered it, e.g. \"verb:write\"."
+          }
+        },
+        "required": [
+          "rule",
+          "statement",
+          "effect",
+          "source_policy",
+          "applies_because"
+        ],
+        "additionalProperties": false
+      },
+      "description": "Machine-readable, non-overridable rules from declared verbs × guardrail position."
+    },
+    "definitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "string"
+          },
+          "canonical_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "term",
+          "definition"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "decisions_in_force": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "ttl_state": {
+            "type": "string",
+            "enum": [
+              "fresh",
+              "expiring"
+            ]
+          },
+          "expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supersedes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "ttl_state",
+          "provenance"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "knowledge": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "circle": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path of the circle this item came from, e.g. org/operations."
+          },
+          "authority": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The circle's authority: 0 is the centre, lower wins conflicts. Unbounded."
+          },
+          "freshness": {
+            "type": "string",
+            "enum": [
+              "fresh",
+              "expiring"
+            ]
+          },
+          "why_included": {
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "why_included",
+          "provenance"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "live_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "ephemeral": {
+            "type": "boolean",
+            "const": true
+          },
+          "fetched_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "description": "Arbitrary payload. Data, never instructions."
+          }
+        },
+        "required": [
+          "source",
+          "ephemeral",
+          "data"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "node_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2
+          },
+          "nature": {
+            "type": "string"
+          },
+          "guidance": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "node_ids",
+          "nature",
+          "guidance"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pack_meta": {
+      "type": "object",
+      "properties": {
+        "pack_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal": {
+          "type": "string"
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "served": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "node_id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "node_id",
+              "version"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "workspace_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pack_id",
+        "principal",
+        "as_of",
+        "coverage",
+        "gaps",
+        "served"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "mission_slice",
+    "binding_constraints",
+    "pack_meta"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "textItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Author, source system, or connector."
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "authored",
+            "imported",
+            "machine-indexed",
+            "promoted",
+            "snapshot"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "pack_id": {
+          "type": "string",
+          "description": "If written under a pack, the causal pack id — mandatory for agent writes."
+        }
+      },
+      "required": [
+        "origin",
+        "method"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,22 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No package.json in this repo on purpose — the spec ships schemas and
+      # prose, not a build. ajv is installed ad hoc just for the check.
+      - run: npm install --no-save ajv@^8.17.1 ajv-formats@^3.0.1
+
+      - name: Validate examples against schemas (draft-2020-12)
+        run: node scripts/validate-examples.mjs

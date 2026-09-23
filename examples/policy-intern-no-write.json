@@ -1,0 +1,7 @@
+{
+  "subjects": [{ "kind": "trust_tier", "ref": "intern" }],
+  "verbs": ["write"],
+  "objects": { "circle_paths": ["org/doctrine"], "sensitivity_max": 2 },
+  "effect": "deny",
+  "rationale": "Interns and intern-tier agents never write policy."
+}
