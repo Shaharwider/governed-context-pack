@@ -8,7 +8,7 @@ description: An open standard for what AI agents are told.
 
 # Context Pack Specification
 
-**Version:** 0.2.0 (draft) · **Status:** Draft for public review · **License:** CC-BY-4.0 (text) / Apache-2.0 (schemas & examples)
+**Version:** 0.2.1 (draft) · **Status:** Draft for public review · **License:** CC-BY-4.0 (text) / Apache-2.0 (schemas & examples)
 
 A **context pack** is a structured, permission-scoped, provenance-carrying answer to the question an AI agent asks before doing work: *"What does this organization know that bears on my task — and what am I bound by?"* This document specifies the request an agent (or its harness) sends, the response a conforming provider returns, and the behavioral rules that make packs auditable.
 

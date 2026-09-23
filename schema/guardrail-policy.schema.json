@@ -81,6 +81,7 @@
             "type": "string",
             "minLength": 1
           },
+          "minItems": 1,
           "description": "Only circles carrying at least one of these roles."
         }
       },

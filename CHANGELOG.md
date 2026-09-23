@@ -5,6 +5,20 @@ spec is versioned semver-style per §6: pre-1.0, breaking changes to §2–§4 b
 the minor version; after 1.0 they bump the major version. Schemas and the
 `@datacircles/context-pack` npm package track the same version.
 
+## v0.2.1 — 2026-09-23
+
+Reference-implementation parity fixes found in review the same day; no
+change to the request or response contract.
+
+### Changed
+
+- `objects.roles` now carries `minItems: 1` in the JSON Schema — "circles
+  carrying at least one listed role" cannot be an empty list.
+- The reference implementation now accepts every §5 payload the schema
+  accepts (absent `objects`, integer `sensitivity_max`, `rationale`,
+  `version`), rejects unknown rule/subject keys as §2 requires, and keeps
+  an `expired` policy enforced until a human resolves it (§5.3 rule 2).
+
 ## v0.2.0 — 2026-09-23
 
 First public release. Draft for review; nothing here is frozen yet. Supersedes
