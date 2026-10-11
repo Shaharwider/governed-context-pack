@@ -1,0 +1,6 @@
+{
+  "subjects": [{ "kind": "org_role", "ref": "member" }],
+  "access": "propose",
+  "objects": { "circle_kinds": ["knowledge", "workspace"] },
+  "rationale": "Every member reads, and may propose to, every open circle; owners approve."
+}

@@ -1,35 +1,103 @@
 {
-  "pack_version": "0.2",
+  "pack_version": "0.3",
   "mission_slice": [
-    { "id": "n_mission", "text": "We never ship a billing change without a reversible path. Customer trust outranks release speed." }
+    {
+      "id": "n_mission",
+      "text": "We never ship a billing change without a reversible path. Customer trust outranks release speed.",
+      "provenance": {
+        "origin": "founder",
+        "method": "authored",
+        "created_at": "2026-08-19T09:00:00Z"
+      }
+    }
   ],
   "binding_constraints": [
     {
-      "rule": "no-prod-deploy-during-freeze",
-      "statement": "Production deploys are frozen during the pricing-change window without a human co-sign.",
+      "rule": "deploy-bot-propose-only-in-operations",
+      "statement": "Deploy agents may propose operations runbooks but not write them directly.",
       "effect": "deny",
+      "scope": {
+        "verbs": [
+          "write"
+        ],
+        "circle_paths": [
+          "org/operations"
+        ]
+      },
       "source_policy": "pol_142",
-      "applies_because": ["verb:write", "artifact:services/billing-worker"]
+      "applies_because": {
+        "verbs": [
+          "write"
+        ],
+        "circles": [
+          "org/operations"
+        ]
+      }
     },
     {
-      "rule": "billing-writes-require-cosign",
-      "statement": "Writes touching billing require sponsor co-sign.",
+      "rule": "working-memory-writes-are-task-scoped",
+      "statement": "Writes to working memory are allowed only inside an open task.",
       "effect": "require",
+      "scope": {
+        "verbs": [
+          "write"
+        ],
+        "circle_paths": [
+          "org/workspace"
+        ]
+      },
       "source_policy": "pol_089",
-      "applies_because": ["verb:write"]
+      "applies_because": {
+        "verbs": [
+          "write"
+        ]
+      },
+      "conditions": {
+        "task_scoped": true
+      }
     }
   ],
   "definitions": [
-    { "term": "billing-worker", "definition": "The Cloud Run service draining the invoicing jobs queue.", "canonical_id": "ent_billing_worker" }
+    {
+      "term": "billing-worker",
+      "definition": "The Cloud Run service draining the invoicing jobs queue.",
+      "canonical_id": "ent_billing_worker",
+      "provenance": {
+        "origin": "glossary",
+        "method": "authored",
+        "created_at": "2026-07-02T11:00:00Z"
+      }
+    }
   ],
   "decisions_in_force": [
+    {
+      "id": "ADR-044",
+      "title": "No production deploys during the pricing-change window",
+      "body": "Production deploys are frozen during the pricing-change window without a human co-sign.",
+      "ttl_state": "expiring",
+      "expires": "2026-09-20T00:00:00Z",
+      "supersedes": [
+        "ADR-039"
+      ],
+      "provenance": {
+        "origin": "dana@example.com",
+        "method": "authored",
+        "created_at": "2026-09-01T09:00:00Z"
+      }
+    },
     {
       "id": "ADR-042",
       "title": "Blue/green deploys for all billing services",
       "ttl_state": "expiring",
       "expires": "2026-09-14T00:00:00Z",
-      "supersedes": ["ADR-031"],
-      "provenance": { "origin": "dana@example.com", "method": "authored", "created_at": "2026-06-16T09:00:00Z" }
+      "supersedes": [
+        "ADR-031"
+      ],
+      "provenance": {
+        "origin": "dana@example.com",
+        "method": "authored",
+        "created_at": "2026-06-16T09:00:00Z"
+      }
     }
   ],
   "knowledge": [
@@ -41,28 +109,57 @@
       "authority": 6,
       "freshness": "fresh",
       "why_included": "entity match: billing-worker; graph: governed_by ADR-042",
-      "provenance": { "origin": "connector:github", "method": "machine-indexed", "created_at": "2026-09-08T03:12:00Z" }
+      "provenance": {
+        "origin": "connector:github",
+        "method": "machine-indexed",
+        "created_at": "2026-09-08T03:12:00Z"
+      }
     }
   ],
   "live_data": [],
   "conflicts": [
     {
-      "node_ids": ["ADR-042", "n_proposal_direct_deploy"],
+      "conflict_id": "cf_01J8F31M2A",
+      "node_ids": [
+        "ADR-042",
+        "n_proposal_direct_deploy"
+      ],
       "nature": "Proposed decision contradicts the blue/green requirement.",
-      "guidance": "ADR-042 is in force; the proposal is unapproved — prefer ADR-042 and flag to a human."
+      "guidance": "ADR-042 is in force; the proposal is unapproved — prefer ADR-042. Pending a human decision as conflict cf_01J8F31M2A.",
+      "detected_at": "2026-09-09T16:40:00Z"
     }
   ],
   "pack_meta": {
     "pack_id": "pk_01J8F2ZQ7T",
-    "principal": "agent:deploy-bot (sponsor: dana@example.com)",
+    "principal": {
+      "id": "agent:deploy-bot",
+      "kind": "agent",
+      "sponsor": "dana@example.com"
+    },
     "as_of": "2026-09-10T12:00:00Z",
     "coverage": 0.82,
-    "gaps": ["no rollback runbook found for billing-worker"],
-    "served": [
-      { "node_id": "n_mission", "version": "v3" },
-      { "node_id": "ADR-042", "version": "v2" },
-      { "node_id": "n_runbook_deploy", "version": "v11" }
+    "gaps": [
+      "no rollback runbook found for billing-worker"
     ],
+    "served": [
+      {
+        "node_id": "n_mission",
+        "version": "v3"
+      },
+      {
+        "node_id": "ADR-044",
+        "version": "v1"
+      },
+      {
+        "node_id": "ADR-042",
+        "version": "v2"
+      },
+      {
+        "node_id": "n_runbook_deploy",
+        "version": "v11"
+      }
+    ],
+    "digest": "sha256:a217ee9d87d1b46fdd015addacd69f51cd4ef0f47a7cd51966ffe01b56c2d5fd",
     "workspace_id": "ws_01J8F2K9QX"
   }
 }

@@ -1,7 +1,7 @@
 {
   "intent": "Deploy the billing worker to production ahead of the pricing change",
   "entities": ["billing-worker", "production", "pricing"],
-  "verbs": ["read", "write"],
+  "verbs": ["read", "propose", "write"],
   "artifacts": ["services/billing-worker"],
   "token_budget": 8000,
   "as_of": "2026-09-10T12:00:00Z",

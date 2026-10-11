@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaharwider.github.io/governed-context-pack/schema/access-posture.schema.json",
+  "title": "AccessPostureRule",
+  "type": "object",
+  "properties": {
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "org_role",
+              "role",
+              "trust_tier",
+              "group"
+            ]
+          },
+          "ref": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "additionalProperties": false,
+        "patternProperties": {
+          "^x-": {}
+        }
+      },
+      "minItems": 1,
+      "description": "Who the rule gives default access to. `org_role`: `member` names every human in the organization except its guests, `admin` its administrators, `guest` its guests."
+    },
+    "access": {
+      "type": "string",
+      "enum": [
+        "read",
+        "propose",
+        "write"
+      ],
+      "description": "The access level given — never `admin`: approval comes only from ownership (§4.9)."
+    },
+    "objects": {
+      "type": "object",
+      "properties": {
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "description": "Only circles carrying at least one of these roles."
+        },
+        "authority_min": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Only circles whose authority is >= this value."
+        },
+        "authority_max": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Only circles whose authority is <= this value."
+        },
+        "circle_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "knowledge",
+              "guardrail",
+              "system",
+              "workspace"
+            ]
+          },
+          "minItems": 1,
+          "description": "Only circles of these kinds (§1)."
+        }
+      },
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
+    },
+    "rationale": {
+      "type": "string",
+      "description": "Human-readable why — a posture is knowledge and explains itself."
+    }
+  },
+  "required": [
+    "subjects",
+    "access"
+  ],
+  "additionalProperties": false,
+  "patternProperties": {
+    "^x-": {}
+  }
+}

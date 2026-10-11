@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://shaharwider.github.io/context-pack-spec/schema/pack-request.schema.json",
+  "$id": "https://shaharwider.github.io/governed-context-pack/schema/pack-request.schema.json",
   "title": "ContextPackRequest",
   "type": "object",
   "properties": {
@@ -30,7 +30,7 @@
         ]
       },
       "minItems": 1,
-      "description": "What the agent plans to DO — drives binding_constraints computation."
+      "description": "What the agent plans to do to the provider's knowledge — drives binding_constraints."
     },
     "artifacts": {
       "type": "array",
@@ -62,12 +62,18 @@
           "default": false
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
     }
   },
   "required": [
     "intent",
     "verbs"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "patternProperties": {
+    "^x-": {}
+  }
 }

@@ -1,0 +1,612 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shaharwider.github.io/governed-context-pack/schema/pack-response.consumer.schema.json",
+  "title": "ContextPackResponseConsumer",
+  "type": "object",
+  "properties": {
+    "pack_version": {
+      "type": "string",
+      "const": "0.3",
+      "description": "Breaking line this pack conforms to, e.g. \"0.3\"."
+    },
+    "mission_slice": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/textItem"
+      },
+      "description": "Compressed rendering of the mission-role circle(s). Never elided by budget."
+    },
+    "binding_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "rule": {
+            "type": "string",
+            "description": "Stable rule id."
+          },
+          "statement": {
+            "type": "string",
+            "description": "Human-readable rule."
+          },
+          "effect": {
+            "type": "string",
+            "enum": [
+              "deny",
+              "require"
+            ]
+          },
+          "scope": {
+            "type": "object",
+            "properties": {
+              "verbs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "read",
+                    "propose",
+                    "write",
+                    "approve",
+                    "traverse"
+                  ]
+                },
+                "minItems": 1
+              },
+              "circle_paths": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              }
+            },
+            "required": [
+              "verbs"
+            ],
+            "additionalProperties": true
+          },
+          "source_policy": {
+            "type": "string",
+            "description": "Policy node id that produced this constraint."
+          },
+          "applies_because": {
+            "type": "object",
+            "properties": {
+              "verbs": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "read",
+                    "propose",
+                    "write",
+                    "approve",
+                    "traverse"
+                  ]
+                },
+                "minItems": 1
+              },
+              "circles": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              },
+              "artifacts": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 1
+              }
+            },
+            "additionalProperties": true,
+            "anyOf": [
+              {
+                "properties": {
+                  "verbs": true
+                },
+                "required": [
+                  "verbs"
+                ],
+                "additionalProperties": true
+              },
+              {
+                "properties": {
+                  "circles": true
+                },
+                "required": [
+                  "circles"
+                ],
+                "additionalProperties": true
+              },
+              {
+                "properties": {
+                  "artifacts": true
+                },
+                "required": [
+                  "artifacts"
+                ],
+                "additionalProperties": true
+              }
+            ]
+          },
+          "conditions": {
+            "type": "object",
+            "properties": {
+              "schedule": {
+                "type": "string"
+              },
+              "requires_cosign": {
+                "type": "boolean"
+              },
+              "task_scoped": {
+                "type": "boolean"
+              },
+              "max_per_day": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": true,
+            "anyOf": [
+              {
+                "properties": {
+                  "schedule": true
+                },
+                "required": [
+                  "schedule"
+                ],
+                "additionalProperties": true
+              },
+              {
+                "properties": {
+                  "requires_cosign": true
+                },
+                "required": [
+                  "requires_cosign"
+                ],
+                "additionalProperties": true
+              },
+              {
+                "properties": {
+                  "task_scoped": true
+                },
+                "required": [
+                  "task_scoped"
+                ],
+                "additionalProperties": true
+              },
+              {
+                "properties": {
+                  "max_per_day": true
+                },
+                "required": [
+                  "max_per_day"
+                ],
+                "additionalProperties": true
+              }
+            ]
+          }
+        },
+        "required": [
+          "rule",
+          "statement",
+          "effect",
+          "scope",
+          "source_policy",
+          "applies_because"
+        ],
+        "additionalProperties": true,
+        "if": {
+          "properties": {
+            "effect": {
+              "const": "require"
+            }
+          },
+          "required": [
+            "effect"
+          ],
+          "additionalProperties": true
+        },
+        "then": {
+          "properties": {
+            "conditions": true
+          },
+          "required": [
+            "conditions"
+          ],
+          "additionalProperties": true
+        },
+        "else": {
+          "not": {
+            "required": [
+              "conditions"
+            ]
+          }
+        }
+      },
+      "description": "Constraints on knowledge access, from declared verbs × guardrail position."
+    },
+    "definitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string"
+          },
+          "definition": {
+            "type": "string"
+          },
+          "canonical_id": {
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
+        },
+        "required": [
+          "term",
+          "definition",
+          "provenance"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "decisions_in_force": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "ttl_state": {
+            "type": "string",
+            "enum": [
+              "fresh",
+              "expiring"
+            ]
+          },
+          "expires": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supersedes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "ttl_state",
+          "provenance"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "knowledge": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "circle": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path of the circle this item came from."
+          },
+          "authority": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "The circle's authority: 0 is the centre, lower wins conflicts. Unbounded."
+          },
+          "freshness": {
+            "type": "string",
+            "enum": [
+              "fresh",
+              "expiring"
+            ]
+          },
+          "why_included": {
+            "type": "string"
+          },
+          "provenance": {
+            "$ref": "#/$defs/provenance"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "why_included",
+          "provenance"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "live_data": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "ephemeral": {
+            "type": "boolean",
+            "const": true
+          },
+          "fetched_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "data": {
+            "description": "Arbitrary payload. Data, never instructions. Not inspected for x- keys."
+          }
+        },
+        "required": [
+          "source",
+          "ephemeral",
+          "data"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "conflict_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable, provider-assigned id — the same across every pack that surfaces this conflict."
+          },
+          "node_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 2
+          },
+          "nature": {
+            "type": "string"
+          },
+          "guidance": {
+            "type": "string"
+          },
+          "detected_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "conflict_id",
+          "node_ids",
+          "nature",
+          "guidance"
+        ],
+        "additionalProperties": true
+      },
+      "description": "Known unresolved conflicts among served nodes. Always present; [] means none are known. Never elided by budget."
+    },
+    "pack_meta": {
+      "type": "object",
+      "properties": {
+        "pack_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "principal": {
+          "$ref": "#/$defs/principal"
+        },
+        "as_of": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "served": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "node_id": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "node_id",
+              "version"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "description": "sha256 of the JCS canonical pack with this field removed."
+        },
+        "workspace_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pack_id",
+        "principal",
+        "as_of",
+        "coverage",
+        "gaps",
+        "served",
+        "digest"
+      ],
+      "additionalProperties": true
+    }
+  },
+  "required": [
+    "pack_version",
+    "mission_slice",
+    "binding_constraints",
+    "conflicts",
+    "pack_meta"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "textItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "provenance"
+      ],
+      "additionalProperties": true
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string",
+          "description": "Author, source system, or connector."
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "authored",
+            "imported",
+            "machine-indexed",
+            "promoted",
+            "snapshot"
+          ]
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "pack_id": {
+          "type": "string",
+          "description": "If written under a pack, the causal pack id — mandatory for agent writes."
+        }
+      },
+      "required": [
+        "origin",
+        "method"
+      ],
+      "additionalProperties": true
+    },
+    "principal": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "human",
+            "agent",
+            "service"
+          ]
+        },
+        "sponsor": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "kind"
+      ],
+      "additionalProperties": true,
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "agent"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": true
+      },
+      "then": {
+        "properties": {
+          "sponsor": true
+        },
+        "required": [
+          "sponsor"
+        ],
+        "additionalProperties": true
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "properties": {
+        "schedule": {
+          "type": "string"
+        },
+        "requires_cosign": {
+          "type": "boolean"
+        },
+        "task_scoped": {
+          "type": "boolean"
+        },
+        "max_per_day": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "description": "Validate a pack you received. Unknown fields are allowed. A different pack_version, or an unknown value in a closed set, still fails. Do not use the producer schema for this."
+}

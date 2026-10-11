@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://shaharwider.github.io/context-pack-spec/schema/guardrail-policy.schema.json",
+  "$id": "https://shaharwider.github.io/governed-context-pack/schema/guardrail-policy.schema.json",
   "title": "GuardrailPolicy",
   "type": "object",
   "properties": {
@@ -14,7 +14,8 @@
             "enum": [
               "principal",
               "role",
-              "trust_tier"
+              "trust_tier",
+              "group"
             ]
           },
           "ref": {
@@ -26,7 +27,10 @@
           "kind",
           "ref"
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "patternProperties": {
+          "^x-": {}
+        }
       },
       "minItems": 1
     },
@@ -85,7 +89,10 @@
           "description": "Only circles carrying at least one of these roles."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
     },
     "effect": {
       "type": "string",
@@ -112,7 +119,10 @@
           "minimum": 1
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
     },
     "rationale": {
       "type": "string",
@@ -127,5 +137,8 @@
     "verbs",
     "effect"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "patternProperties": {
+    "^x-": {}
+  }
 }

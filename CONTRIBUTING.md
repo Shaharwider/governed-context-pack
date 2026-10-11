@@ -56,7 +56,7 @@ Versioning rules are normative and live in **§6 of the spec**:
 
 - semver-style; pre-1.0, breaking changes to §2–§4 bump the **minor** version,
   after 1.0 they bump the **major** version;
-- packs SHOULD declare `pack_version` at the top level of the response;
+- packs MUST declare `pack_version` at the top level of the response;
 - every released change gets a `CHANGELOG.md` entry and a git tag.
 
 ## Scope

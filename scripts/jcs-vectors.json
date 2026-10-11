@@ -1,0 +1,10 @@
+[
+  { "name": "sort", "value": { "b": 1, "a": 2 }, "canonical": "{\"a\":2,\"b\":1}" },
+  { "name": "euro-before-controls", "value": { "€": "Euro", "\r": "CR" }, "canonical": "{\"\\r\":\"CR\",\"€\":\"Euro\"}" },
+  { "name": "nested", "value": { "z": [true, null, { "b": "x", "a": "y" }], "a": false }, "canonical": "{\"a\":false,\"z\":[true,null,{\"a\":\"y\",\"b\":\"x\"}]}" },
+  { "name": "negative-zero", "value": { "n": -0 }, "canonical": "{\"n\":0}" },
+  { "name": "large", "value": { "n": 1e21 }, "canonical": "{\"n\":1e+21}" },
+  { "name": "small", "value": { "n": 1e-7 }, "canonical": "{\"n\":1e-7}" },
+  { "name": "escapes", "value": { "s": "\u0000\u001f\"\\é" }, "canonical": "{\"s\":\"\\u0000\\u001f\\\"\\\\é\"}" },
+  { "name": "bmp-before-surrogate", "value": { "\uD800\uDC00": "non-bmp", "a": "bmp" }, "canonical": "{\"a\":\"bmp\",\"𐀀\":\"non-bmp\"}" }
+]

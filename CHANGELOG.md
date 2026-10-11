@@ -1,9 +1,99 @@
 # Changelog
 
-All notable changes to the context-pack specification are recorded here. The
-spec is versioned semver-style per §6: pre-1.0, breaking changes to §2–§4 bump
-the minor version; after 1.0 they bump the major version. Schemas and the
-`@datacircles/context-pack` npm package track the same version.
+All notable changes to the Governed Context Pack specification are recorded here.
+The spec is versioned semver-style per §6: `pack_version` names a breaking line
+(`MAJOR.MINOR`). Before 1.0, breaking changes to §2–§4 bump the minor number;
+after 1.0 they bump the major number. Additive changes ship as patch releases
+inside the line. Schemas and the `@datacircles/context-pack` npm package track
+the same version.
+
+## v0.3.0 — 2026-09-30
+
+Breaking line `"0.3"`. The title is now **Governed Context Pack Specification**.
+The public repository is renamed to `governed-context-pack`. 0.2.0 and 0.2.1
+were published on 2026-09-23 under the previous name, `context-pack-spec`;
+after the rename their schema `$id`s no longer resolve. The git tags remain.
+
+### Changed
+
+- **Verbs are knowledge-store access only.** A verb is an action on knowledge
+  held by the provider, never a world action. World rules (a deploy freeze)
+  are served as knowledge in `decisions_in_force` or `mission_slice`.
+  `binding_constraints` constrain knowledge access.
+- **`pack_version` is required** and names the breaking line (`"0.3"`).
+  Producers are strict. Consumers ignore unknown fields within a line.
+  Requests stay strict. Any object may carry `x-` extension fields.
+- **`principal` is an object** `{ id, kind, sponsor? }`, established by
+  transport authentication. A provider must not accept a self-declared principal.
+  `sponsor` is required when `kind` is `agent` (SPEC §4.8).
+- **`conflicts` is required** on every pack (`[]` means none known). Each
+  conflict carries a stable `conflict_id` and may carry `detected_at`.
+- **Binding constraints** gain `scope` and a structured `applies_because`.
+  `conditions` is required exactly when `effect` is `require`, and uses the
+  §5 conditions vocabulary.
+- **Provenance is required** on `mission_slice` and `definitions` items.
+- The worked deploy example follows the rules above.
+
+### Added
+
+- **`pack_meta.digest`** (required): `sha256:` plus the SHA-256 of the RFC 8785
+  canonical pack with that field removed. The same `pack_id` returns the same
+  digest forever. The digest detects corruption and accidental change. It is
+  not a signature.
+- **`schema/pack-response.consumer.schema.json`**: the schema a consumer uses
+  to validate a pack it received. Unknown fields pass. A different
+  `pack_version`, or a new value in a closed set, fails.
+- Adding a value to a closed set (verbs, `effect`, `principal.kind`,
+  `provenance.method`, `ttl_state`, `freshness`) is a breaking change.
+- Providers persist the canonical pack bytes as an audit record. That record
+  is not knowledge.
+- `@datacircles/context-pack` **0.3.0** — first registry release. Adds
+  `parseContextPack`, `computePackDigest`, and `verifyPackDigest`.
+
+### Migration from 0.2
+
+- Set `pack_version` to `"0.3"` and add `digest`.
+- Replace a string `principal` with `{ id, kind, sponsor? }`.
+- Move world-action rules out of `binding_constraints` into `decisions_in_force`
+  or `mission_slice`. Give each remaining constraint a `scope` and a structured
+  `applies_because`. Add `conditions` to every `require`.
+- Add `provenance` to mission and definition items.
+- Schema `$id`s move to
+  `https://shaharwider.github.io/governed-context-pack/schema/`.
+
+## v0.3.0 — 2026-09-28
+
+Who holds access, who answers for it, and which conflicts wait on them.
+Breaking per §6 (new MUSTs in §3 and §4).
+
+### Added
+
+- **Sponsor cap (§4.8):** an agent's effective access never exceeds its human sponsor's; a provider refuses to serve an agent whose sponsor is missing or not a human.
+- **Ownership and approval (§4.9), required of every conforming provider:** every circle has a human owner — named, inherited from its parent, or the organization's administrators; only owners approve; changing a circle's access is itself audited and restricted to its owners and administrators.
+- **Precedence across scopes (§4.10):** lower authority prevails; at equal authority the shallower circle (organization over team over person).
+- **Source-derived access (§4.11):** access imported from a source system is never widened by the provider. An outside collaborator is first imported as a guest, and an import never changes the role of a principal the provider already knows.
+- **Default posture (§4.12, §5.4, `schema/access-posture.schema.json`):** an optional, versioned, citable default — it adds access like a grant, never gives approval, never reaches a closed circle or a guest, and fails closed when ambiguous.
+- Terminology (§1): sponsor, group, owner, posture, guest, source, circle kind.
+
+### Changed
+
+- Guardrail policy subjects (§5.1) gain `group`.
+- Posture subjects (§5.4): `org_role: member` names every human except guests; `org_role: guest` names guests.
+- **`conflicts` is REQUIRED on every pack** (§3.7). An empty array states
+  that the provider knows of no unresolved conflict among the served nodes;
+  a missing section no longer means "none or not checked, you guess".
+- **Every conflict carries a stable `conflict_id`** (§3.7), provider-assigned
+  and identical across every pack that surfaces the same conflict until it is
+  resolved or dismissed — one handle for the agent flagging it, the human
+  deciding it, and the audit trail. `detected_at` is optional.
+- **`conflicts` survives any `token_budget`** (§4.6), alongside
+  `mission_slice` and `binding_constraints`: dropping a conflict for space
+  would be picking a winner silently.
+
+### Migration
+
+Add `"conflicts": []` to packs that had no conflicts, and a `conflict_id` to
+each conflict you already emit.
 
 ## v0.2.1 — 2026-09-23
 
